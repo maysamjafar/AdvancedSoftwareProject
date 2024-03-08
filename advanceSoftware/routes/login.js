@@ -12,8 +12,8 @@ const login = (pool) => {
 
     pool.getConnection((err, connection) => {
       if (err) {
-        console.log(err);
-        res.status(500).send('Internal Server Error2');
+        console.error(err);
+        res.status(500).send('Internal Server Error');
         return;
       }
 
@@ -21,22 +21,24 @@ const login = (pool) => {
         connection.release();
 
         if (err) {
-          console.log(err);
+          console.error(err);
           res.status(500).send('Internal Server Error');
           return;
         }
 
         if (!rows || rows.length === 0) {
-          req.session.isAuthenticated = false;
           res.status(404).send('Please Login');
           return;
         }
 
-        if (Username === rows[0].Username) {
+        // Assuming you want to check the password match here
+        if (passward === rows[0].passward) {
           req.session.isAuthenticated = true;
+          res.json(rows);
+        } else {
+          req.session.isAuthenticated = false;
+          res.status(401).send('Invalid username or password');
         }
-
-        res.json(rows);
       });
     });
   });
@@ -44,4 +46,4 @@ const login = (pool) => {
   return router;
 };
 
-module.exports = login;
+module.exports = login;
