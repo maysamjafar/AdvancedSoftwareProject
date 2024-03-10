@@ -1,49 +1,45 @@
-const { Router } = require('express');
+const express = require('express');
+const bodyParser = require('body-parser');
+const mysql = require('mysql');
+const bcrypt = require('bcrypt');
 
-const login = (pool) => {
-  const router = Router();
+const router = express.Router();
+router.use(bodyParser.urlencoded({ extended: true }));
+router.use(bodyParser.json());
 
-  router.get('/', (req, res) => {
-    const { Username, passward } = req.body;
-    const query = `
-      SELECT *
-      FROM user_profile
-      WHERE username LIKE ? AND passward LIKE ?`;
+// Create MySQL connection
+const connection = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'advance'
+});
 
-    pool.getConnection((err, connection) => {
-      if (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-        return;
-      }
+connection.connect(err => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+  }
+  console.log('Connected to MySQL');
+});
 
-      connection.query(query, [Username, passward], (err, rows) => {
-        connection.release();
+// Sign-in endpoint
+router.post('/', async (req, res) => {
+  const { username, password } = req.body;
 
-        if (err) {
-          console.error(err);
-          res.status(500).send('Internal Server Error');
-          return;
-        }
+  // Check if username exists in the database
+  connection.query('SELECT * FROM user_profile WHERE username = ? AND password=?', [username,password], async (err, results) => {
+    if (err) {
+      console.error('Error querying MySQL:', err);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
 
-        if (!rows || rows.length === 0) {
-          res.status(404).send('Please Login');
-          return;
-        }
-
-        // Assuming you want to check the password match here
-        if (passward === rows[0].passward) {
-          req.session.isAuthenticated = true;
-          res.json(rows);
-        } else {
-          req.session.isAuthenticated = false;
-          res.status(401).send('Invalid username or password');
-        }
-      });
-    });
+    if (results.length === 0) {
+      return res.status(400).json({ message: 'Invalid username or password1' });
+    }
+    // If both username and password are correct, sign in successful
+    res.json({ message: 'Sign in successful' });
   });
+});
 
-  return router;
-};
-
-module.exports = login;
+module.exports = router;

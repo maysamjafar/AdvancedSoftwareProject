@@ -9,7 +9,7 @@ CREATE TABLE user_profile (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 -----
----
+
 ----
 INSERT INTO user_profile (username, email, password, craft_skills, craft_interests)
 VALUES

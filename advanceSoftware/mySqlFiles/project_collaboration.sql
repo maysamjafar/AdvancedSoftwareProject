@@ -7,7 +7,7 @@ CREATE TABLE project_collaboration (
     FOREIGN KEY (project_id) REFERENCES craft_project(project_id),
     FOREIGN KEY (user_id) REFERENCES user_profile(user_id)
 );
---
+
 -----
 ---
 INSERT INTO project_collaboration (project_id, user_id, task_assignment, communication_tools)

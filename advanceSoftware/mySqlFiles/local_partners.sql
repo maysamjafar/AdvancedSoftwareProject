@@ -8,7 +8,7 @@ CREATE TABLE local_partners (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 --
---
+
 ---
 INSERT INTO local_partners (partner_name, partner_type, location, contact_info)
 VALUES

@@ -10,7 +10,7 @@ CREATE TABLE finished_projects (
 );
 --
 --
-----
+
 --
 INSERT INTO finished_projects (project_id, user_id, image_url, description, share_date)
 VALUES

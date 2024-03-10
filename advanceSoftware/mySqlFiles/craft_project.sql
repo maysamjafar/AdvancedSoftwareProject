@@ -17,4 +17,3 @@ VALUES
     ('Quilt with Embroidery', 'Make a quilt with intricate embroidery.', 'Advanced', 'Fabric, Embroidery Thread', 2),
     ('Handmade Leather Wallet', 'Craft a stylish leather wallet.', 'Intermediate', 'Leather, Stitching Tools', 1),
     ('Origami Crane Mobile', 'Construct a mobile with origami paper cranes.', 'Intermediate', 'Origami Paper, Strings', 1);
-------

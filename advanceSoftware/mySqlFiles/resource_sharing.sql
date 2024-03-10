@@ -8,7 +8,7 @@ CREATE TABLE resource_sharing (
 );
 --
 --
------
+
 INSERT INTO resource_sharing (user_id, material_name, quantity, availability_status)
 VALUES
     (1, 'Yarn', 5, 'Available'),
