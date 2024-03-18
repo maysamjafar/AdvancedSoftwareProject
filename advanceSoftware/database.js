@@ -6,7 +6,7 @@ function connectToDatabase() {
         host: 'localhost',
         user: 'root',
         password: '',
-        database: 'safa'
+        database: 'saf'
     });
     
     connection.connect(function(err) {

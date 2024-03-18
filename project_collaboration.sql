@@ -1,3 +1,4 @@
+USE saf;
 CREATE TABLE project_collaboration (
     collaboration_id INT PRIMARY KEY AUTO_INCREMENT,
     project_id INT,
