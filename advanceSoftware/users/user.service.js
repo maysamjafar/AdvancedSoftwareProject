@@ -3,8 +3,8 @@ const currentEmail = require('./user.controller');
 module.exports={
     create:(data,callback)=>{
         pool.query(
-            `insert into user_profile(user_id,username,email,password,craft_skills,craft_interests,created_at,updated_at)
-                 values(?,?,?,?,?,?,?,?) `,
+            `insert into user_profile(user_id,username,email,password,craft_skills,craft_interests,created_at,updated_at,IsAdmin)
+                 values(?,?,?,?,?,?,?,?,?) `,
             [
                 data.user_id,
                 data.username,
@@ -13,7 +13,8 @@ module.exports={
                 data.craft_skills,
                 data.craft_interests,
                 data.created_at,
-                data.updated_at
+                data.updated_at,
+                data.IsAdmin
             ],
             (error,results,fields)=>{
                 if (error){
@@ -75,7 +76,7 @@ module.exports={
             }
             if (results){
               pool.query(
-                `update user_profile set username =?,email =?,password =?,craft_skills =?,craft_interests =?,created_at =?,updated_at =? where user_id=?`
+                `update user_profile set username =?,email =?,password =?,craft_skills =?,craft_interests =?,created_at =?,updated_at =? ,IsAdmin =? where user_id=?`
                 ,[
                     data.username,
                     data.email,
@@ -84,6 +85,7 @@ module.exports={
                     data.craft_interests,
                     data.created_at,
                     data.updated_at,
+                    data.IsAdmin,
                     results[0].user_id 
                 ],
                 (error, results, fields) => {
@@ -100,11 +102,11 @@ module.exports={
         }
         ); 
     }, 
-    getUsersByUserName : (UserName, callBack) => {
+    getUsersByUserName : (username, callBack) => {
         pool.query(
             `select email,craft_skills,craft_interests from user_profile where 
             username like ?`,
-            [`%${UserName}%`] ,
+            [`%${username}%`] ,
             (error, results, fields) => {
                 if (error) {
                  return callBack(error);
@@ -125,10 +127,9 @@ module.exports={
           }
       );
     },
-
     getUsers:callback=>{
         pool.query(
-            `select user_id,username,email,password,craft_skills,craft_interests,created_at,updated_at from user_profile `,
+            `select user_id,username,email,password,craft_skills,craft_interests,created_at,updated_at,IsAdmin from user_profile `,
              [],
              (error,results,fields) =>{
                 if(error){

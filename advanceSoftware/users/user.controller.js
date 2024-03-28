@@ -8,7 +8,8 @@
 const axios = require('axios')
 const { create, getUsers, getUserByEmail, updateCurrentUser, deleteCurrentUser
   , getUsersByUserName, getUserIsAdmin } = require("./user.service");
-const { genSaltSync, hashSync, compareSync } = require("bcrypt");
+  //const { genSaltSync, hashSync } = require('bcrypt');
+const { genSaltSync, hashSync, compareSync } = require('bcrypt');
 const { sign } = require("jsonwebtoken");
 const activeSessions = {};
 let currentemail = '';
@@ -102,9 +103,9 @@ module.exports = {
   //   },
     login: (req, res) => {
     const body = req.body;
-    exports.PUBLIC_currentLoggedInUserEmail = body.Email;
-    currentemail = body.Email;
-    getUserByEmail(body.Email, (err, results) => {
+    exports.PUBLIC_currentLoggedInUserEmail = body.email;
+    currentemail = body.email;
+    getUserByEmail(body.email, (err, results) => {
       if (err) {
         console.log(err);
       }
@@ -115,10 +116,9 @@ module.exports = {
           data: "Invalid email or password !"
         });
       }
-
       //console.log();
       let isAdmin;
-      getUserIsAdmin(results.UserId, (err1, results1) => {
+      getUserIsAdmin(results.user_id, (err1, results1) => {
         if (err1) {
           console.log(err1);
         }
@@ -131,10 +131,10 @@ module.exports = {
         }
       });
       function executeOtherCode(isAdmin) {
-        const passwordNotMatch = compareSync(body.Password, results.Password);
+        const passwordNotMatch = compareSync(body.password, results.password);
         console.log("IS Admin outside: " + isAdmin);
         if (!passwordNotMatch) {
-          results.Password = undefined;
+          results.password = undefined;
           const payload = { result: { ...results, isAdmin } };
           jsontoken = sign(payload, "qwe1234", { expiresIn: "10m" });
           activeSessions[exports.PUBLIC_currentLoggedInUserEmail] = true;
@@ -175,8 +175,8 @@ module.exports = {
     getUsersByUserName: (req, res) => {
       if (activeSessions[exports.PUBLIC_currentLoggedInUserEmail]) {
   
-        const UserName = req.params.UserName;
-        getUsersByUserName(UserName, (err, results) => {
+        const username = req.params.username;
+        getUsersByUserName(username, (err, results) => {
           if (err) {
             console.log(err);
             return;
@@ -184,7 +184,7 @@ module.exports = {
           if (!results) {
             return res.json({
               success: 0,
-              message: "There are no users with this UserName!"
+              message: "There are no users with this username!"
             });
           }
           results.password = undefined;
@@ -230,7 +230,8 @@ module.exports = {
     updateCurrentUser: (req, res) => {
       const body = req.body;
       const salt = genSaltSync(10);
-      body.Password = hashSync(body.Password, salt);
+      body.password = hashSync(body.password, 10);
+      //body.password = hashSync(body.password, salt);
       if (activeSessions[exports.PUBLIC_currentLoggedInUserEmail]) {
         updateCurrentUser(body, (err, results) => {
           if (err) {
