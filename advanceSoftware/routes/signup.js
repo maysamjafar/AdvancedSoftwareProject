@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
 
 const router = express.Router();
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -14,7 +15,16 @@ const connection = mysql.createConnection({
   password: '',
   database: 'advance'
 });
-
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: "ruahuwari@gmail.com",
+    pass: "wumndvgkltfmjkdd",
+  },
+});
 connection.connect(err => {
   if (err) {
     console.error('Error connecting to MySQL:', err);
@@ -50,10 +60,25 @@ router.post('/', async (req, res) => {
           console.error('Error inserting into MySQL:', err);
           return res.status(500).json({ message: 'Internal server error' });
         }
+        // Send welcome email to the user
+        transporter.sendMail({
+          from: 'maysam.jafar@2001@gmail.com',
+          to: email,
+          subject: 'Welcome to Our Application',
+          text: `Hello ${username},\n\nWelcome to our application! You have successfully signed up.\n\nRegards,\nThe Team`
+        }, (error, info) => {
+          if (error) {
+            console.error('Error sending email:', error);
+            // Handle error
+          } else {
+            console.log('Email sent:', info.response);
+            // Handle success
+          }
+        });
         res.json({ message: 'Sign up successful' });
       }
     );
   });
 });
 
-module.exports = router
+module.exports = router;
